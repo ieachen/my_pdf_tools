@@ -1,0 +1,29 @@
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
+        os: ['windows-latest', 'macos-latest']
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - run: pip install -r requirements.txt pyinstaller
+
+    - run: pip install -e .
+
+    # - run: pyinstaller -F -w ./my_pdf_tools/main.py
+    - run: pyinstaller -F ./my_pdf_tools/main.py
+
+    # Optionally verify that it works (provided that it does not need user interaction)
+    - uses: actions/upload-artifact@v3
+      with:
+        path: dist/*
